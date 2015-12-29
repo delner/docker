@@ -1,4 +1,4 @@
-FROM ubuntu:14.04.3
+FROM delner/ubuntu-core:14.04.3
 MAINTAINER David Elner <david@davidelner.com>
 
 RUN apt-get update
