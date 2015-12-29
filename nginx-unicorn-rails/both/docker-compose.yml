@@ -8,6 +8,7 @@ web:
   build: .
   dockerfile: Dockerfile-dev
   command: ./script/start.sh
+  env_file: .env.development
   # Mounts your host directory as the application, for live editing
   volumes:
     - .:/app

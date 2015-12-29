@@ -15,7 +15,7 @@ There are 4 suggested ways you can use this to setup a Rails application:
 3. *Development w/ docker-compose*: Same as above, but your application consists of multiple containers you want to configure together.
 4. *Both development and production* (recommended): You want to develop locally, but have the option to build and deploy containers.
 
-For each, you will need to copy/create a few files in your project. See the below sections for the one that fits your needs.
+For each, you will need to create a few files in your project. You can copy them from the sample directories in this repo, or create them yourself via the instructions. See the below sections for the one that fits your needs.
 
 (It's highly recommended you use the gem cache for faster builds, and `docker-compose` configurations provided for development environments. Makes starting your application as simple as `docker-compose up`!)
 
@@ -52,27 +52,48 @@ For each, you will need to copy/create a few files in your project. See the belo
 
     EXPOSE 80
     ```
+3. Create `.env.production` in your project and add the following, including your environment variables here. (Note: Do not check this file into your source control repository! Add it to your `.gitignore`)
 
-3. Ensure your Gemfile has Unicorn:
+    ```
+    RAILS_ENV=production
+    SECRET_KEY_BASE=yoursecretkeygoeshere
+    ```
+
+4. Modify your `config/secrets.yml` file or appropriate config section to set the `secret_token` from environment.
+
+    *config/secrets.yml*:
+
+    ```
+    production:
+      secret_key_base: <%= ENV['SECRET_KEY_BASE'] %>
+    ```
+
+    *config/initializers/secret_token.rb*:
+
+    ```
+    Yourapp::Application.config.secret_token = Rails.application.secrets.secret_key_base
+    ```
+
+5. Ensure your Gemfile has Unicorn:
 
     ```
     gem 'unicorn'
     ```
 
-4. Build your project:
+6. Build your project:
 
     ```
     # build your dockerfile
     $ docker build -t your/project .
     ```
 
-5. Run your project
+7. Run your project
 
     ```
     # Run your container
-    $ docker run -p 80:80 your/project
+    $ docker run --env-file .env.production -p 80:80 your/project
     # Or if you're using gem data volume
-    $ docker run -p 80:80 --volumes-from gems-2.3.0 your/project
+    $ docker run --env-file .env.production -p 80:80 --volumes-from gems-2.3.0 your/project
     ```
 
 ### For a development environment only
@@ -190,27 +211,49 @@ If you're wanting to run a development environment instead, here's how.
     foreman start -f Procfile
     ```
 
-7. Ensure your Gemfile has both Spring and Unicorn:
+7. Create `.env.development` in your project and add the following, including your environment variables here.
+
+    ```
+    RAILS_ENV=development
+    SECRET_KEY_BASE=yoursecretkeygoeshere
+    ```
+
+8. Modify your `secrets.yml` file or appropriate config section to set the `secret_token` from environment.
+
+    *config/secrets.yml*:
+
+    ```
+    development:
+      secret_key_base: <%= ENV['SECRET_KEY_BASE'] %>
+    ```
+
+    *config/initializers/secret_token.rb*:
+
+    ```
+    Yourapp::Application.config.secret_token = Rails.application.secrets.secret_key_base
+    ```
+
+9. Ensure your Gemfile has both Spring and Unicorn:
 
     ```
     gem 'unicorn'
     gem 'spring'
     ```
 
-8. Build your project
+10. Build your project
 
     ```
     # build your dockerfile
     $ docker build -t your/project .
     ```
 
-9. Run your project
+11. Run your project
 
     ```
     # Run your container
-    $ docker run -p 80:80 -v .:/app your/project
+    $ docker run --env-file .env.development -p 80:80 -v .:/app your/project
     # Or if you're using gem data volume
-    $ docker run -p 80:80 -v .:/app --volumes-from gems-2.3.0 your/project
+    $ docker run --env-file .env.development -p 80:80 -v .:/app --volumes-from gems-2.3.0 your/project
     ```
 
 ### For a development environment using docker-compose
@@ -253,12 +296,12 @@ Follow steps 2-7 from *For a development environment only* above first. Then all
 
 You'll want to create parallel configurations that don't conflict with one another. Development specific files should be renamed to `development` or have `-dev` suffixed to them.
 
-1. Follow steps 1-7 from *For a development environment using docker-compose* above, but rename the following files:
+1. Follow steps 1-9 from *For a development environment using docker-compose* above, but rename the following files:
     - `Dockerfile` --> `Dockerfile-dev`
     - `Procfile` --> `Procfile-dev`
 2. Modify `script/start.sh` so that it reads `foreman start -f Procfile-dev`
 3. Modify `docker-compose.yml` so that it reads `dockerfile: Dockerfile-dev`
-4. Create a `Dockerfile` from step 2 of *For a production environment only* above, and 
+4. Follow steps 2-4 of *For a production environment only* above.
 5. Create a `Procfile` and add the code below.
 
     ```
