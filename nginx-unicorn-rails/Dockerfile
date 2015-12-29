@@ -1,39 +1,44 @@
 FROM delner/ruby:2.3.0
 MAINTAINER David Elner <david@davidelner.com>
 
-RUN apt-get update
-
-# Install nodejs
-RUN apt-get install -qq -y nodejs
-
-# Intall software-properties-common for add-apt-repository
-RUN apt-get install -qq -y software-properties-common
+# Install dependencies
+RUN apt-get update && \
+    apt-get install -qq -y nodejs software-properties-common
 
 # Install Nginx.
-RUN add-apt-repository -y ppa:nginx/stable && apt-get update
-RUN apt-get install -qq -y nginx=1.8.0-1+trusty1
+RUN add-apt-repository -y ppa:nginx/stable && apt-get update && \
+    apt-get install -qq -y nginx=1.8.0-1+trusty1 && \
+
+    # Cleanup
+    apt-get clean && \
+    cd /var/lib/apt/lists && rm -fr *Release* *Sources* *Packages* && \
+    truncate -s 0 /var/log/*log
+
+# Turn off nginx and set owner
 RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf
 RUN chown -R www-data:www-data /var/lib/nginx
+
 # Add default nginx config
 ADD nginx-sites.conf /etc/nginx/sites-enabled/default
 
-# Install foreman
-RUN gem install foreman
-
-# Install the latest postgresql lib for pg gem
+# Install DB libs
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y --force-yes libpq-dev
+    apt-get install -y --force-yes libpq-dev libmysqlclient-dev && \
 
-## Install MySQL(for mysql, mysql2 gem)
-RUN apt-get install -qq -y libmysqlclient-dev
+    # Cleanup
+    apt-get clean && \
+    cd /var/lib/apt/lists && rm -fr *Release* *Sources* *Packages* && \
+    truncate -s 0 /var/log/*log
 
 # Install Rails App
 WORKDIR /app
-ONBUILD ADD Gemfile /app/Gemfile
-ONBUILD ADD Gemfile.lock /app/Gemfile.lock
-ONBUILD RUN bundle install
+# Defer installation of gems to run time
+# So we can take advantage of gem data volume
+# ONBUILD ADD Gemfile /app/Gemfile
+# ONBUILD ADD Gemfile.lock /app/Gemfile.lock
+# ONBUILD RUN bundle install
 ONBUILD ADD . /app
 
 # Add default unicorn config

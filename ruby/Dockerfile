@@ -1,14 +1,18 @@
 FROM delner/ubuntu-core:14.04.3
 MAINTAINER David Elner <david@davidelner.com>
 
-RUN apt-get update
-
 # Install ruby dependencies
-RUN apt-get install -y wget curl \
+RUN apt-get update && \
+    apt-get install -y wget curl \
     build-essential git git-core \
-    zlib1g-dev libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev
+    zlib1g-dev libssl-dev libreadline-dev libyaml-dev \
+    libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev && \
 
-RUN apt-get update
+    # Cleanup
+    apt-get clean && \
+    cd /var/lib/apt/lists && rm -fr *Release* *Sources* *Packages* && \
+    truncate -s 0 /var/log/*log
+
 
 # Install Ruby 2.3
 RUN cd /tmp &&\
