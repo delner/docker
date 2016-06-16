@@ -12,7 +12,7 @@ Docker base image for Ubuntu with some core libraries & utilities.
 
 ```
 # Dockerfile
-FROM delner/ubuntu-core:14.04.3
+FROM delner/ubuntu-core:16.04
 ```
 
 ## Build and run docker
