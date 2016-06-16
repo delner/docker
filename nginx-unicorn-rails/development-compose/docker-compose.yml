@@ -1,5 +1,5 @@
 # (Optional) Creates a gem cache data volume
-gems-2.3.0:
+gems-2.3.1:
   image: busybox
   volumes:
     - /data/db
@@ -14,6 +14,6 @@ web:
     - .:/app
   # (Optional) Attaches gem cache data volume
   volumes_from:
-  - gems-2.3.0
+    - gems-2.3.1
   ports:
     - "80:80"

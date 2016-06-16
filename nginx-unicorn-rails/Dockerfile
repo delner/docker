@@ -1,4 +1,4 @@
-FROM delner/ruby:2.3.0
+FROM delner/ruby:2.3.1
 MAINTAINER David Elner <david@davidelner.com>
 
 # Install dependencies
@@ -7,7 +7,7 @@ RUN apt-get update && \
 
 # Install Nginx.
 RUN add-apt-repository -y ppa:nginx/stable && apt-get update && \
-    apt-get install -qq -y nginx=1.8.0-1+trusty1 && \
+    apt-get install -qq -y nginx=1.10.1-0+xenial0 && \
 
     # Cleanup
     apt-get clean && \
@@ -22,7 +22,7 @@ RUN chown -R www-data:www-data /var/lib/nginx
 ADD nginx-sites.conf /etc/nginx/sites-enabled/default
 
 # Install DB libs
-RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --force-yes libpq-dev libmysqlclient-dev && \

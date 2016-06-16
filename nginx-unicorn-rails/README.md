@@ -24,19 +24,19 @@ For each, you will need to create a few files in your project. You can copy them
 1. (Optional & recommended) Create a data volume to store gems in. (To make `bundle install` much faster on `docker build`)
 
     ```
-    docker create -v /ruby_gems/2.3.0 --name gems-2.3.0 busybox
+    docker create -v /ruby_gems/2.3.1 --name gems-2.3.1 busybox
     ```
 
 2. Create `Dockerfile` in your project and add the following
 
     ```
     # Dockerfile
-    FROM delner/nginx-unicorn-rails:1.8.0-2.3.0
+    FROM delner/nginx-unicorn-rails:1.10.1-2.3.1
 
     # (Optional) Use gem data volume
-    # Create via: docker create -v /ruby_gems/2.3.0 --name gems-2.3.0 busybox
-    # ENV GEM_HOME /ruby_gems/2.3.0
-    # ENV PATH /ruby_gems/2.3.0/bin:$PATH
+    # Create via: docker create -v /ruby_gems/2.3.1 --name gems-2.3.1 busybox
+    # ENV GEM_HOME /ruby_gems/2.3.1
+    # ENV PATH /ruby_gems/2.3.1/bin:$PATH
 
     # (Optional) Set custom Nginx site configuration (if you have any)
     # ADD config/nginx/production.conf /etc/nginx/sites-enabled/default
@@ -93,7 +93,7 @@ For each, you will need to create a few files in your project. You can copy them
     # Run your container
     $ docker run --env-file .env.production -p 80:80 your/project
     # Or if you're using gem data volume
-    $ docker run --env-file .env.production -p 80:80 --volumes-from gems-2.3.0 your/project
+    $ docker run --env-file .env.production -p 80:80 --volumes-from gems-2.3.1 your/project
     ```
 
 ### For a development environment only
@@ -103,18 +103,18 @@ If you're wanting to run a development environment instead, here's how.
 1. (Optional) Create a data volume to store gems in. (To make `bundle install` much faster on `docker build`)
 
     ```
-    docker create -v /ruby_gems/2.3.0 --name gems-2.3.0 busybox
+    docker create -v /ruby_gems/2.3.1 --name gems-2.3.1 busybox
     ```
 
 2. Create `Dockerfile` in your project and add the following
 
     ```
-    FROM delner/nginx-unicorn-rails:1.8.0-2.3.0
+    FROM delner/nginx-unicorn-rails:1.10.1-2.3.1
 
     # (Optional) Use gem data volume
-    # Created from: docker create -v /ruby_gems/2.3.0 --name gems-2.3.0 busybox
-    # ENV GEM_HOME /ruby_gems/2.3.0
-    # ENV PATH /ruby_gems/2.3.0/bin:$PATH
+    # Created from: docker create -v /ruby_gems/2.3.1 --name gems-2.3.1 busybox
+    # ENV GEM_HOME /ruby_gems/2.3.1
+    # ENV PATH /ruby_gems/2.3.1/bin:$PATH
 
     # Set Nginx site configuration
     ADD config/nginx/development.conf /etc/nginx/sites-enabled/default
@@ -253,7 +253,7 @@ If you're wanting to run a development environment instead, here's how.
     # Run your container
     $ docker run --env-file .env.development -p 80:80 -v .:/app your/project
     # Or if you're using gem data volume
-    $ docker run --env-file .env.development -p 80:80 -v .:/app --volumes-from gems-2.3.0 your/project
+    $ docker run --env-file .env.development -p 80:80 -v .:/app --volumes-from gems-2.3.1 your/project
     ```
 
 ### For a development environment using docker-compose
@@ -266,7 +266,7 @@ Follow steps 2-7 from *For a development environment only* above first. Then all
 
     ```
     # (Optional) Creates a gem cache data volume
-    gems-2.3.0:
+    gems-2.3.1:
       image: busybox
       volumes:
         - /data/db
@@ -280,7 +280,7 @@ Follow steps 2-7 from *For a development environment only* above first. Then all
         - .:/app
       # (Optional) Attaches gem cache data volume
       volumes_from:
-      - gems-2.3.0
+      - gems-2.3.1
       ports:
         - "80:80"
     ```
@@ -317,7 +317,7 @@ You'll want to create parallel configurations that don't conflict with one anoth
     $ docker build -t your/project .
     $ docker run -p 80:80 your/project
     # Or if you're using gem data volume
-    $ docker run -p 80:80 --volumes-from gems-2.3.0 your/project
+    $ docker run -p 80:80 --volumes-from gems-2.3.1 your/project
     # DEVELOPMENT:
     $ docker-compose up
     ```
