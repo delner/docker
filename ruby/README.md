@@ -12,7 +12,7 @@ Docker base image for Ubuntu/Ruby.
 
 ```
 # Dockerfile
-FROM delner/ruby:2.3.0
+FROM delner/ruby:2.3.1
 ```
 
 ## Build and run docker

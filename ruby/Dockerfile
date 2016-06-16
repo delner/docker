@@ -14,20 +14,20 @@ RUN apt-get update && \
     truncate -s 0 /var/log/*log
 
 
-# Install Ruby 2.3
+# Install Ruby 2.3.1
 RUN cd /tmp &&\
-  wget -O ruby-2.3.0.tar.gz https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.0.tar.gz &&\
-  tar -xzvf ruby-2.3.0.tar.gz &&\
-  cd ruby-2.3.0/ &&\
+  wget -O ruby-2.3.1.tar.gz https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.1.tar.gz &&\
+  tar -xzvf ruby-2.3.1.tar.gz &&\
+  cd ruby-2.3.1/ &&\
   ./configure &&\
   make &&\
   make install &&\
   cd /tmp &&\
-  rm -rf ruby-2.3.0 &&\
-  rm -rf ruby-2.3.0.tar.gz
+  rm -rf ruby-2.3.1 &&\
+  rm -rf ruby-2.3.1.tar.gz
 
   # Add Ruby binaries to $PATH
-ENV PATH /opt/rubies/ruby-2.3.0/bin:$PATH
+ENV PATH /opt/rubies/ruby-2.3.1/bin:$PATH
 
 # Add options to gemrc
 RUN echo "gem: --no-document" > ~/.gemrc
