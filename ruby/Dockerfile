@@ -1,4 +1,4 @@
-FROM delner/ubuntu-core:14.04.3
+FROM delner/ubuntu-core:16.04
 MAINTAINER David Elner <david@davidelner.com>
 
 # Install ruby dependencies
